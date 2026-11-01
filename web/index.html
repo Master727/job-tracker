@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Job Tracker</title>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="bar">
+  <span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2"/></svg>Job Tracker</span>
+  <nav class="baractions">
+    <a href="/api/export" download="applications.csv">Export CSV</a>
+    <button id="themeToggle" type="button" class="plain" aria-label="Switch to dark mode">Dark mode</button>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="median">
+    <div class="speed">
+      <strong id="median">—</strong>
+      <p id="speedNote">Median time from posting to applying</p>
+      <div class="tally">
+        <p><b id="todayCount">0</b><span>applied today</span></p>
+        <p><b id="weekCount">0</b><span>in the last 7 days</span></p>
+      </div>
+    </div>
+    <div class="grades" id="grades"></div>
+  </section>
+
+  <form id="quick" class="dispenser" autocomplete="off">
+    <label class="sr" for="quickUrl">Job posting URL</label>
+    <input id="quickUrl" name="url" placeholder="Paste a job posting URL and press Enter" autofocus>
+    <button class="primary" id="quickGo" type="submit">Take a ticket</button>
+  </form>
+
+  <section id="blocked" class="blocked" hidden aria-live="polite">
+    <p><b id="blockedSite">This site</b> doesn’t let other apps read its job pages. Add it from the posting itself: open the posting in your browser and click the <b>Add to Job Tracker</b> bookmark. It reads the page you’re looking at and opens the ticket here.</p>
+    <p class="next"><a id="openPosting" class="bookmarklet" target="_blank" rel="noopener noreferrer">Open the posting</a> then, on that tab, click <b>Add to Job Tracker</b> in your bookmarks bar.</p>
+    <p class="setup">One-time setup: drag this button up onto your bookmarks bar (press ⌘⇧B if the bar is hidden). Don’t click it here; click it on a job posting.
+      <a id="bookmarklet" class="bookmarklet" href="#">Add to Job Tracker</a>
+      <button type="button" class="plain" id="copyBookmarklet">Copy it instead</button></p>
+  </section>
+
+  <form id="draft" class="ticket draft" hidden autocomplete="off">
+    <div class="stub" aria-live="polite"><b id="draftSpeed">?</b><small id="draftSpeedLabel">after posting</small></div>
+    <div class="draftbody">
+      <p id="draftInfo" class="info" role="status"></p>
+      <p id="draftDup" class="info dup" role="status"></p>
+      <div id="summary" class="summary">
+        <strong id="sumCompany"></strong><span id="sumRole" class="role"></span>
+        <span id="sumMeta" class="meta"></span>
+        <button type="button" class="plain fix" id="fixDetails">Fix details</button>
+      </div>
+      <div id="details" class="details">
+        <div class="pair">
+          <label>Company<input name="company" required maxlength="200" placeholder="Company name"></label>
+          <label>Role<input name="role" required maxlength="300" placeholder="Job title from the posting"></label>
+        </div>
+        <div class="pair"><label>Job board<select name="source"></select></label></div>
+      </div>
+      <fieldset class="choice">
+        <legend>Resume used</legend>
+        <div id="resumeChips" class="chips resumes"></div>
+      </fieldset>
+      <fieldset class="choice" id="postedField">
+        <legend>How long ago was it posted?</legend>
+        <div id="postedChips" class="chips"></div>
+        <p id="draftPosted" class="info found" role="status"></p>
+      </fieldset>
+      <input type="hidden" name="url">
+      <div class="draftactions"><button class="primary" type="submit">Save ticket</button><button class="plain" type="button" id="draftCancel">Cancel</button></div>
+    </div>
+  </form>
+
+  <div class="toolbar">
+    <nav id="filters" class="filters" aria-label="Filter by status"></nav>
+    <input id="search" type="search" placeholder="Search company or role" aria-label="Search applications">
+  </div>
+  <p id="notice" role="status"></p>
+  <ol id="tickets" class="tickets"></ol>
+  <div id="empty" class="empty" hidden></div>
+</main>
+
+<dialog id="editor">
+  <form id="form" method="dialog" autocomplete="off">
+    <div class="dialoghead"><h2>Edit application</h2><button type="button" id="close" class="plain" aria-label="Close">✕</button></div>
+    <input type="hidden" name="id">
+    <div class="pair">
+      <label>Company<input name="company" required maxlength="200"></label>
+      <label>Role<input name="role" required maxlength="300"></label>
+    </div>
+    <div class="pair">
+      <label>Status<select name="status"></select></label>
+      <label>Job board<select name="source"></select></label>
+    </div>
+    <label>Resume used<select name="resume"></select></label>
+    <div class="pair">
+      <label>Posted<input type="datetime-local" name="posted_at"></label>
+      <label>Applied<input type="datetime-local" name="applied_at" required></label>
+    </div>
+    <label>Posting link<input name="url" type="url" placeholder="https://…"></label>
+    <label>Notes<textarea name="notes" rows="5" placeholder="Recruiter name, interview times, follow-ups…"></textarea></label>
+    <div class="dialogactions"><button type="button" id="delete" class="danger">Delete</button><button class="primary" type="submit">Save changes</button></div>
+    <p id="formError" role="alert"></p>
+  </form>
+</dialog>
+<script src="/app.js"></script>
+</body>
+</html>
